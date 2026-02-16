@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NIKO PORTFOLIO</title>
     <script src="https://w.soundcloud.com/player/api.js"></script>
     <style>
@@ -13,22 +13,18 @@
             --sync-speed: 2s;
         }
 
-        /* --- ESTILOS BASE --- */
-        * {
-            box-sizing: border-box; /* Garante que nada saia do limite da tela */
-        }
-
+        /* --- BASE STYLES --- */
         body {
             background-color: var(--black);
             color: var(--pink);
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
-            padding: 10px; /* Menos margem pra telas menores */
+            padding: 20px;
             overflow-x: hidden;
             text-transform: uppercase;
-            font-size: 18px; /* Aumentei a base de tudo */
         }
 
+        /* Scanlines Overlay */
         body::before {
             content: " ";
             display: block;
@@ -42,39 +38,36 @@
         }
 
         .container {
-            width: 100%;
             max-width: 900px;
-            margin: 20px auto;
+            margin: 0 auto;
             border: 4px solid var(--pink);
-            padding: 5%; /* Padding em porcentagem para ser elástico */
+            padding: 40px;
             position: relative;
-            background: var(--black);
         }
 
         /* --- HEADER --- */
         .header-wrapper {
             display: flex;
-            flex-wrap: wrap; /* Faz quebrar linha se não couber */
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 30px;
             margin-bottom: 30px;
         }
 
         .header-title {
-            font-size: clamp(2.5rem, 10vw, 5rem); /* Tamanho dinâmico */
+            font-size: 5rem;
             font-weight: bold;
-            letter-spacing: 5px;
+            letter-spacing: 10px;
             margin: 0;
             animation: textGlitch var(--sync-speed) infinite;
         }
 
         .profile-pic {
-            width: 150px; /* Um pouco maior */
-            height: 150px;
+            width: 120px;
+            height: 120px;
             border: 4px solid var(--pink);
             display: block;
-            object-fit: cover;
+            object-fit: cover; /* Quadrada (sem border-radius) */
             animation: imgGlitch var(--sync-speed) infinite;
         }
 
@@ -83,9 +76,9 @@
             border-bottom: 2px solid var(--pink);
             margin-bottom: 30px;
             padding-bottom: 20px;
-            font-size: 1.3rem; /* TEXTO MAIOR */
+            font-size: 1.2rem;
             color: var(--cyan);
-            line-height: 1.6;
+            line-height: 1.5;
             text-align: center;
             animation: textFlicker 4s infinite;
         }
@@ -96,90 +89,95 @@
             background: var(--pink);
             color: var(--black);
             display: table;
-            padding: 10px 20px;
-            margin: 0 auto 25px auto;
+            padding: 5px 15px;
+            margin: 0 auto 20px auto;
             text-align: center;
-            font-size: 1.5rem;
         }
 
+        /* --- COMPONENTS --- */
         .custom-emoji {
-            width: 22px; height: 22px;
-            display: inline-block; vertical-align: middle;
-            margin-left: 8px;
-            background-color: var(--cyan);
+            width: 17px; height: 17px;
+            display: inline-block; vertical-align: text-bottom;
+            margin-left: 5px; margin-bottom: 3px;
+            background-color: var(--cyan); opacity: 0.85;
             -webkit-mask: url('icons/internet.png') no-repeat center / contain;
             mask: url('icons/internet.png') no-repeat center / contain;
+            image-rendering: pixelated; 
         }
 
-        /* --- VOLUME --- */
         .volume-control {
-            margin: 0 auto 30px auto;
-            text-align: center;
-            background: #111;
-            border: 2px solid var(--cyan);
-            padding: 15px;
-            width: 100%;
-            max-width: 400px;
+            margin: 0 auto 30px auto; text-align: center;
+            background: #111; border: 2px solid var(--cyan);
+            padding: 10px; width: fit-content;
             box-shadow: 4px 4px 0px var(--pink);
         }
 
-        input[type=range] { width: 60%; cursor: pointer; }
+        .volume-control label { margin-right: 10px; font-size: 0.9rem; font-weight: bold; color: var(--cyan); vertical-align: middle; }
+        #vol-display { margin-left: 10px; font-family: 'Courier New', monospace; font-weight: bold; color: var(--cyan); vertical-align: middle; }
 
-        /* --- GRID --- */
-        .track-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Grid inteligente */
-            gap: 20px;
-            margin-bottom: 50px;
-        }
+        /* Slider Styles */
+        input[type=range] { -webkit-appearance: none; width: 150px; background: transparent; vertical-align: middle; cursor: pointer; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 15px; width: 15px; background: var(--pink); border: 1px solid var(--black); margin-top: -5px; box-shadow: 2px 2px 0px #fff; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: var(--cyan); border: 1px solid var(--black); }
+        /* Firefox Fixes */
+        input[type=range]::-moz-range-track { width: 100%; height: 4px; background: var(--cyan); border: 1px solid var(--black); }
+        input[type=range]::-moz-range-thumb { height: 15px; width: 15px; background: var(--pink); border: 1px solid var(--black); }
 
-        .track-card {
-            background: var(--black);
-            border: 2px solid var(--pink);
-            padding: 10px;
-            transition: all 0.2s;
-            filter: grayscale(1);
-        }
-
-        .track-card.playing {
-            filter: none;
-            border-color: var(--cyan);
-            box-shadow: 0 0 20px var(--pink);
+        /* --- MUSIC GRID --- */
+        .track-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 50px; }
+        .track-card { background: var(--black); border: 2px solid var(--pink); padding: 8px; transition: all 0.2s; filter: grayscale(1) contrast(150%); position: relative; }
+        .track-card iframe { display: block; width: 100%; }
+        
+        .track-card:hover, .track-card.playing {
+            filter: none !important;
             transform: scale(1.02);
+            box-shadow: 8px 8px 0px var(--cyan);
+            border-color: var(--cyan);
+            z-index: 10;
         }
+        .track-card.playing { box-shadow: 0 0 20px var(--pink); }
 
-        /* --- LINKS --- */
-        .contact-link { color: var(--pink); text-decoration: none; font-weight: bold; font-size: 1.2rem; }
-        .contact-link:hover { background: var(--cyan); color: var(--black); }
+        /* --- FOOTER & LINKS --- */
+        .contact-link { color: var(--pink); text-decoration: none; font-weight: bold; transition: 0.2s; display: inline-block; }
+        .contact-link:hover { background: var(--cyan); color: var(--black); transform: skewX(-10deg); box-shadow: 3px 3px 0px var(--pink); }
 
-        .milk-link { 
-            font-size: 1.1rem; /* BEM MAIOR AGORA */
-            color: var(--pink); 
-            text-decoration: none; 
-            display: inline-block;
-            margin-top: 15px;
-            border: 1px dashed var(--pink);
-            padding: 5px 10px;
-        }
-        .milk-link:hover { text-decoration: underline; color: var(--cyan); }
+        .milk-link { font-size: 0.7rem; opacity: 0.7; color: var(--pink); text-decoration: none; cursor: pointer; transition: 0.3s; }
+        .milk-link:hover { opacity: 1; text-decoration: underline; text-shadow: 0 0 5px var(--cyan); }
 
-        footer { text-align: center; font-size: 1rem; color: var(--cyan); margin-top: 30px; }
+        footer { text-align: center; font-size: 0.8rem; color: var(--cyan); margin-top: 20px; }
 
         /* --- ANIMATIONS --- */
-        @keyframes textFlicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        @keyframes textFlicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } 52% { opacity: 0.5; } 54% { opacity: 0.8; } }
         @keyframes imgGlitch { 
-            0%, 100% { transform: translate(0); box-shadow: 5px 5px 0px var(--cyan); }
-            5% { transform: translate(-5px, 2px); box-shadow: -5px -5px 0px var(--pink); }
+            0% { transform: translate(0); box-shadow: 5px 5px 0px var(--cyan); filter: hue-rotate(0deg); }
+            5% { transform: translate(-3px, 2px); box-shadow: -5px -5px 0px var(--pink); filter: hue-rotate(90deg); }
+            10% { transform: translate(3px, -2px); box-shadow: 5px 2px 0px var(--cyan); filter: hue-rotate(0deg); }
+            15% { transform: translate(0); filter: brightness(1.5); }
+            20% { transform: translate(0); filter: none; }
+            100% { transform: translate(0); }
         }
         @keyframes textGlitch {
-            0%, 100% { transform: translate(0); text-shadow: 4px 4px 0px var(--cyan); }
-            10% { transform: translate(-2px, -2px); text-shadow: -4px -4px 0px var(--pink); }
+            0% { transform: translate(0); text-shadow: 5px 5px 0px var(--cyan); }
+            5% { transform: translate(-3px, 2px); text-shadow: -5px -5px 0px var(--pink); }
+            10% { transform: translate(3px, -2px); text-shadow: 5px 2px 0px var(--cyan); }
+            15% { transform: translate(0); filter: brightness(1.5); }
+            20% { transform: translate(0); filter: none; }
+            100% { transform: translate(0); }
+        }
+
+        @media (max-width: 768px) {
+            .track-grid { grid-template-columns: 1fr; }
+            .header-wrapper { flex-direction: column; gap: 10px; }
+            .header-title { font-size: 3rem; }
+            .volume-control { width: 90%; }
+            input[type=range] { width: 100%; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    
     <header class="header-wrapper">
         <img src="imgs/pfp.png" alt="NIKO PFP" class="profile-pic">
         <h1 class="header-title">NIKO</h1>
@@ -189,22 +187,22 @@
         > PRESENT DAY // PRESENT TIME <br>
         > CONNECTION: ESTABLISHED <div class="custom-emoji"></div> <br>
         > "Close the world, Open the nExt." <br>
-        <p style="font-size: 1rem; margin-top: 10px;">...just noise & frequencies</p>
+        <p style="margin-top: 10px;">...just noise & frequencies</p>
     </div>
 
     <h2>SOUND_FILES.EXE</h2>
 
     <div class="volume-control">
-        <label for="vol-slider">VOL:</label>
+        <label for="vol-slider">MASTER_VOL:</label>
         <input type="range" id="vol-slider" min="0" max="100" value="30">
         <span id="vol-display">30%</span>
     </div>
 
     <div class="track-grid">
-        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" height="166" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2267669699&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
-        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" height="166" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2183888999&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
-        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" height="166" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2237405783&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
-        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" height="166" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2246398076&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
+        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2267669699&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
+        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2183888999&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
+        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2237405783&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
+        <div class="track-card"><iframe scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2246398076&color=%23fe3768&auto_play=false&hide_related=true&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe></div>
     </div>
     
     <h2>CONTACT_DATA.TXT</h2>
@@ -212,6 +210,7 @@
     <div class="bio no-border">
         > Discord: <a href="https://discord.com/users/641738749775970325" target="_blank" class="contact-link">nikoiscoool</a> <br>
         > Instagram: <a href="https://instagram.com/nikoiscool" target="_blank" class="contact-link">@nikoiscool</a> <br>
+        <br>
         <a href="donate.html" class="milk-link">(help me buy milk...)</a>
     </div>
 
@@ -221,31 +220,46 @@
 </div>
 
 <script>
+    // FIX: window.onload garante que o script só rode quando TUDO (incluindo iframes do SoundCloud) estiver carregado.
     window.onload = function() {
         const widgets = [];
         let currentVolume = 30;
         const slider = document.getElementById('vol-slider');
         const display = document.getElementById('vol-display');
 
+        // Configura cada player encontrado
         document.querySelectorAll('iframe').forEach(iframe => {
             const widget = SC.Widget(iframe);
             widgets.push(widget);
-            widget.bind(SC.Widget.Events.READY, () => widget.setVolume(currentVolume));
+
+            // Assim que o player estiver pronto, aplica o volume inicial
+            widget.bind(SC.Widget.Events.READY, () => {
+                widget.setVolume(currentVolume);
+            });
+
+            // Quando der PLAY: ilumina o card
             widget.bind(SC.Widget.Events.PLAY, () => {
+                // Remove o brilho de todos
                 document.querySelectorAll('.track-card').forEach(c => c.classList.remove('playing'));
+                // Adiciona brilho só no atual
                 iframe.parentElement.classList.add('playing');
             });
+
+            // Quando pausar ou acabar: remove o brilho
             const stopPlaying = () => iframe.parentElement.classList.remove('playing');
             widget.bind(SC.Widget.Events.PAUSE, stopPlaying);
             widget.bind(SC.Widget.Events.FINISH, stopPlaying);
         });
 
+        // Controle do Slider de Volume
         slider.addEventListener('input', function() {
             currentVolume = this.value;
             display.innerText = currentVolume + "%";
+            // Atualiza todos os widgets ao mesmo tempo
             widgets.forEach(w => w.setVolume(currentVolume));
         });
     };
 </script>
+
 </body>
 </html>
