@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DONATE // NIKO</title>
+    <style>
+        /* Mesmas variáveis e estilos base para manter a identidade */
+        :root {
+            --pink: #fe3768;
+            --black: #000000;
+            --cyan: #00ff88;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--pink);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0; padding: 20px;
+            overflow-x: hidden;
+            text-transform: uppercase;
+        }
+
+        body::before {
+            content: " "; display: block; position: fixed; inset: 0; 
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100; background-size: 100% 4px, 3px 100%; pointer-events: none;
+        }
+
+        .container {
+            max-width: 600px; /* Mais estreito pra ficar focado */
+            margin: 0 auto;
+            border: 4px solid var(--pink);
+            padding: 40px;
+            position: relative;
+            text-align: center;
+        }
+
+        /* Botão de Voltar */
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--cyan);
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid var(--cyan);
+            padding: 10px 20px;
+            transition: 0.2s;
+        }
+        .back-btn:hover {
+            background: var(--cyan);
+            color: var(--black);
+            box-shadow: 3px 3px 0px var(--pink);
+        }
+
+        h2 {
+            background: var(--pink); color: var(--black);
+            display: inline-block; padding: 5px 15px; margin-bottom: 20px;
+        }
+
+        /* Estilos do QR Code */
+        #qrcode-container {
+            background: #fff; padding: 10px; display: inline-block;
+            border: 2px solid var(--cyan); box-shadow: 5px 5px 0px var(--pink);
+            margin-bottom: 20px;
+        }
+        #pix-qr { width: 200px; height: 200px; image-rendering: pixelated; }
+
+        .pix-key-box {
+            display: flex; justify-content: center; gap: 10px; margin-top: 10px; flex-wrap: wrap;
+        }
+        .pix-key-box input {
+            background: var(--black); border: 1px solid var(--pink);
+            color: var(--cyan); padding: 8px; font-family: 'Courier New', monospace;
+            width: 220px; font-size: 0.8rem; outline: none; text-align: center;
+        }
+        .pix-key-box button {
+            background: var(--pink); border: 1px solid var(--cyan);
+            color: var(--black); font-weight: bold; cursor: pointer;
+            padding: 8px 15px; font-family: 'Courier New', monospace;
+        }
+        .pix-key-box button:hover { background: var(--cyan); color: var(--pink); }
+
+        footer { margin-top: 40px; font-size: 0.7rem; color: var(--cyan); opacity: 0.7; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-btn"><< BACK_TO_REALITY</a>
+    <br>
+
+    <h2>PIX.EXE</h2>
+
+    <p style="color: var(--cyan); margin-bottom: 20px;">
+        > SUPPORT THE CHAOS <br>
+        <span style="font-size: 0.8rem; color: var(--pink);">[instant_transfer_protocol]</span>
+    </p>
+
+    <div id="qrcode-container">
+        <canvas id="pix-qr"></canvas>
+    </div>
+
+    <div class="pix-key-box">
+        <input type="text" id="pix-copy-paste" readonly value="Geraaaando..." onclick="this.select()">
+        <button onclick="copyPix()">COPY</button>
+    </div>
+
+    <footer>
+        THANK YOU FOR THE MILK...
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<script>
+    // --- SEUS DADOS AQUI ---
+    const chavePix = "pixproberey@gmail.com"; 
+    const nome = "Nicolas dos Santos Gonçalves"; 
+    const cidade = "SAO PAULO"; 
+    const valor = ""; 
+    const txid = "NIKO001"; 
+
+    function generatePixPayload(chave, nome, cidade, valor, txid) {
+        const format = (id, value) => {
+            const len = value.length.toString().padStart(2, "0");
+            return `${id}${len}${value}`;
+        };
+        const removeAccents = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const merchantAccount = format("00", "br.gov.bcb.pix") + format("01", chave);
+        const merchantCat = "0000"; 
+        const transactionCurrency = "986"; 
+        const countryCode = "BR";
+        const merchantName = format("59", removeAccents(nome).substring(0, 25));
+        const merchantCity = format("60", removeAccents(cidade).substring(0, 15));
+        const transactionAmount = valor ? format("54", parseFloat(valor).toFixed(2)) : "";
+        const additionalData = format("62", format("05", txid || "***"));
+        let payload = "000201" + format("26", merchantAccount) + format("52", merchantCat) + format("53", transactionCurrency) + transactionAmount + format("58", countryCode) + merchantName + merchantCity + additionalData + "6304"; 
+        const polynomial = 0x1021;
+        let crc = 0xFFFF;
+        for (let i = 0; i < payload.length; i++) {
+            crc ^= (payload.charCodeAt(i) << 8);
+            for (let j = 0; j < 8; j++) {
+                if ((crc & 0x8000) !== 0) crc = (crc << 1) ^ polynomial;
+                else crc = crc << 1;
+            }
+        }
+        return payload + (crc & 0xFFFF).toString(16).toUpperCase().padStart(4, "0");
+    }
+
+    const pixPayload = generatePixPayload(chavePix, nome, cidade, valor, txid);
+    document.getElementById("pix-copy-paste").value = pixPayload;
+
+    new QRious({
+        element: document.getElementById('pix-qr'),
+        value: pixPayload,
+        size: 200,
+        background: 'white',
+        foreground: 'black',
+        level: 'M'
+    });
+
+    function copyPix() {
+        const copyText = document.getElementById("pix-copy-paste");
+        copyText.select();
+        document.execCommand("copy");
+        alert("PIX CODE COPIADO! >_<");
+    }
+</script>
+
+</body>
+</html>
